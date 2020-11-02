@@ -1,2 +1,9 @@
 cmake-build-debug/
 .idea/
+
+bin/
+include/
+lib/
+
+*.tgz
+*.tar.gz
