@@ -49,16 +49,18 @@ setup.shは以下のようになっています。
 最終行から分かるようにSDL2から始まるtar.gzファイルを検索し、
 それぞれtarコマンドで展開しつつbin、lib、includeを直下に配置し他は/dev/nullに捨てています。
 
-```shell script
+```
 #!/bin/bash
+
 PREFIX="x86_64"
-echo $1while getopts ":i686:x86_64" optKey; do
-	case "$optKey" in
-		i686) PREFIX="i686"
-		x86_64) ;;
-  esac
+while getopts x86_64:i686: OPT
+do
+ case $OPT in
+   "x86_64" ) ;;
+   "i686" ) PREFIX="i686" ;;
+ esac
 done
-find -name "SDL2*.tar.gz" | xargs -I{} tar zxvf {} --transform="s,^[^/]+/x86_64[^/]+/(bin|include|lib),\1,x;s,^SDL2,/dev/null/,x" --absolute-names --show-transformed-names
+find -name "SDL2*.tar.gz" | xargs -I{} tar zxvf {} --transform="s,^[^/]+/${PREFIX}[^/]+/(bin|include|lib),\1,x;s,^SDL2,/dev/null/,x" --absolute-names --show-transformed-names
 ```
 
 ## サンプルの実行
