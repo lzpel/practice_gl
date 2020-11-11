@@ -1,7 +1,7 @@
 #define SDL_MAIN_HANDLED
 #include <math.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
+#include <SDL.h>
+#include <SDL_opengl.h>
 
 static const int width = 480, height = 360, p=1000;
 

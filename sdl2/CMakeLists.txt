@@ -1,13 +1,19 @@
 cmake_minimum_required(VERSION 3.12)
 project(sdl2-triangle)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "../bin")
+# libraries linked and included
+# glfw glfwを使う他のデモとの衝突を避ける
+if(NOT TARGET SDL2)
+	add_subdirectory(dependency/sdl2)
+	include_directories(${SDL2_SOURCE_DIR}/include)
+endif()
 
-include_directories(./include)
-link_directories(./lib)
+# libraries compiled and include
+# glad/gl.h
+include_directories(dependency/src)
+file(GLOB dep "dependency/src/*.cpp" "dependency/src/*.c")
 
-file(GLOB sourcefiles "*.h" "*.cpp")
-add_executable(${PROJECT_NAME} ${sourcefiles})
-
-find_package(OpenGL)
-target_link_libraries(${PROJECT_NAME} ${OPENGL_LIBRARIES} SDL2_image SDL2 SDL2main)
+# target
+file(GLOB src "src/*.cpp" "src/*.c")
+add_executable(${PROJECT_NAME} ${src} ${dep})
+target_link_libraries(${PROJECT_NAME} SDL2-static opengl32)

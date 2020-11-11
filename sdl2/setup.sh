@@ -1,11 +1,9 @@
 #!/bin/bash
 
-PREFIX="x86_64"
-while getopts x86_64:i686: OPT
-do
-  case $OPT in
-    "x86_64" ) ;;
-    "i686" ) PREFIX="i686" ;;
-  esac
-done
-find -name "SDL2*.tar.gz" | xargs -I{} tar zxvf {} --transform="s,^[^/]+/${PREFIX}[^/]+/(bin|include|lib),\1,x;s,^SDL2,/dev/null/,x" --absolute-names --show-transformed-names
+cd `dirname $0`
+mkdir dependency dependency/src
+cd dependency
+
+# glfw for window
+
+curl -L https://www.libsdl.org/release/SDL2-2.0.12.tar.gz | tar -zxv --transform="s,^[^/]+/,sdl2/,x;"
