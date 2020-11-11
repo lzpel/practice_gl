@@ -2,9 +2,12 @@ cmake_minimum_required(VERSION 3.12)
 project(glfw-gltf)
 
 # libraries linked and included
-# glfw
-add_subdirectory(dependency/glfw)
-include_directories(${GLFW3_INCLUDE_DIR})
+# glfw glfwを使う他のデモとの衝突を避ける
+if(NOT TARGET glfw)
+	set(GLFW_BUILD_EXAMPLES OFF)
+	add_subdirectory(dependency/glfw)
+	include_directories(${GLFW3_INCLUDE_DIR})
+endif()
 
 # libraries only included (header only)
 # tiny_gltf.h std_image.h glm/gtc/matrix_transform.hpp

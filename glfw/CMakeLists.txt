@@ -1,10 +1,20 @@
 cmake_minimum_required(VERSION 3.12)
-project(gear)
+project(glfw-triangle)
 
-include_directories(./ ./include)
-link_directories(./lib)
+# libraries linked and included
+# glfw glfwを使う他のデモとの衝突を避ける
+if(NOT TARGET glfw)
+	set(GLFW_BUILD_EXAMPLES OFF)
+	add_subdirectory(dependency/glfw)
+	include_directories(${GLFW3_INCLUDE_DIR})
+endif()
 
-file(GLOB sourcefiles "*.h" "*.cpp" "*.c")
-add_executable(${PROJECT_NAME} ${sourcefiles})
+# libraries compiled and include
+# glad/gl.h
+include_directories(dependency/src)
+file(GLOB dep "dependency/src/*.cpp" "dependency/src/*.c")
 
-target_link_libraries(${PROJECT_NAME} glfw3)
+# target
+file(GLOB src "src/*.cpp" "src/*.c")
+add_executable(${PROJECT_NAME} ${src} ${dep})
+target_link_libraries(${PROJECT_NAME} glfw)

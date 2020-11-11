@@ -328,7 +328,7 @@ static void error_callback(int error, const char *description) {
 }
 
 int main(int argc, char **argv) {
-	std::string filename = "../dependency/tinygltf/models/Cube/Cube.gltf";
+	std::string filename = "../../glfw-gltf/dependency/tinygltf/models/Cube/Cube.gltf";
 
 	if (argc > 1) {
 		filename = argv[1];

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(mygame)
+project(sdl2-triangle)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "../bin")
 
