@@ -4,7 +4,7 @@ project(glfw-gltf)
 # libraries linked and included
 # glfw glfwを使う他のデモとの衝突を避ける
 if(NOT TARGET glfw)
-	set(GLFW_BUILD_EXAMPLES OFF)
+	set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "Build the GLFW example programs")
 	add_subdirectory(dependency/glfw)
 	include_directories(${GLFW3_INCLUDE_DIR})
 endif()

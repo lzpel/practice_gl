@@ -2,10 +2,13 @@ cmake-build-debug/
 cmake-build-release/
 .idea/
 
+tmp/
 dependency/
 bin/
 include/
 lib/
 
+*.zip
 *.tgz
 *.tar.gz
+
