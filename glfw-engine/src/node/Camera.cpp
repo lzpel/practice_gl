@@ -22,23 +22,13 @@ void main() {\n\
 
 const char* VertexShaderCode ="\
 #version 330 core\n\
-layout(location = 0) in vec3 in_vertex;\n\
-layout(location = 1) in vec3 in_normal;\n\
-layout(location = 2) in vec2 in_texcoord;\n\
-\n\
 uniform mat4 MVP;\n\
-\n\
 out vec3 normal;\n\
-out vec3 position;\n\
-out vec2 texcoord;\n\
-\n\
 void main(){\n\
-	gl_Position = "/*MVP * */"vec4(in_vertex, 1);\n\
-	position = gl_Position.xyz;\n\
-	normal = normalize("/* mat3(MVP) * */"in_normal);\n\
-	position = in_vertex;\n\
-	texcoord = in_texcoord;\n\
+	gl_Position = MVP * gl_Vertex;\n\
 	gl_FrontColor = gl_Color;\n\
+	gl_TexCoord[0] = gl_MultiTexCoord0;\n\
+	normal = normalize( mat3(MVP) * gl_Normal);\n\
 }";
 
 glm::mat4 genView(glm::vec3 pos, glm::vec3 lookat) {
@@ -126,6 +116,7 @@ void Camera::Init() {
 	glDeleteShader(FragmentShaderID);
 	glUseProgram(ProgramID);
 	shaderid = ProgramID;
+	shadermvpid = glGetUniformLocation(shaderid, "MVP");
 }
 
 void Camera::Terminate() {
@@ -155,8 +146,7 @@ void Camera::Draw() {
 
 	// build a model-view-projection
 	glm::mat4 mvp = genMVP(view_mat, model_mat, 45.0f, window.x, window.y);
-	//glUniformMatrix4fv(MVP_u, 1, GL_FALSE, &mvp[0][0]);
+	glUniformMatrix4fv(shadermvpid, 1, GL_FALSE, &mvp[0][0]);
 	//glUniform3fv(sun_position_u, 1, &sun_position[0]);
 	//glUniform3fv(sun_color_u, 1, &sun_color[0]);
-
 }

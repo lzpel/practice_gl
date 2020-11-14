@@ -10,7 +10,7 @@
 class Camera :virtual public Node{
 	float up[3];
 	float lookat[3];
-	int shaderid;
+	int shaderid,shadermvpid;
 	void Init();
 	void Draw();
 	void Terminate();

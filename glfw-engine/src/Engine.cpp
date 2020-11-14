@@ -74,13 +74,13 @@ void Engine::Init(){
 void Engine::Draw() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	double t=glfwGetTime();
-	glClearColor(1, 1, 1, 0);
+	glClearColor(0, 0, 0, 0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBegin(GL_TRIANGLES);
 	glColor3f(0.5+0.5*sin(5*M_PI*t), 0.5+0.5*sin(7*M_PI*t), 0.5+0.5*sin(11*M_PI*t));
-	glVertex2f(sin(2*M_PI*t), 1);
-	glVertex2f(-1, -1);
-	glVertex2f(1, -1);
+	glVertex2f(sin(2*M_PI*t), sqrt(3));
+	glVertex2f(-1, 0);
+	glVertex2f(1, 0);
 	glEnd();
 	glFlush();
 }

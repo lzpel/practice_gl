@@ -8,6 +8,7 @@
 #include "Node.h"
 
 class Axis :virtual public Node{
+	unsigned vbuf,size;
 public:
 	void Init();
 	void Draw();
