@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(glfwglew)
+#add_compile_options(-D GLEW_STATIC)
+#set(GLEW_USE_STATIC_LIBS TRUE)
 find_package ( GLEW REQUIRED )
 find_package ( GLFW3 REQUIRED )
 find_package ( OpenGL REQUIRED )

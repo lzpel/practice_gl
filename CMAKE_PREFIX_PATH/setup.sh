@@ -6,9 +6,10 @@ curl -LOs https://sourceforge.net/projects/glew/files/glew/2.1.0/glew-2.1.0-win3
 curl -LOs https://github.com/glfw/glfw/releases/download/3.3.2/glfw-3.3.2.bin.WIN64.zip
 curl -LOs https://github.com/g-truc/glm/archive/0.9.9.8.zip
 find -name "*.zip" | xargs -I{} unzip -q -d tmp -o {}
-find tmp -name "*.lib" -or -name "*.a" | grep "64" | xargs -I{} mv -f {} lib/
-find tmp -name "*.lib" -or -name "*.a" | xargs -I{} mv -n {} lib/
 find tmp -name "include" -type d | xargs -I{} cp -r {} ./
+find tmp -name "*.lib" -or -name "*.dll" | grep "64" | xargs -I{} mv -f {} lib/
+find tmp -name "*.lib" -or -name "*.dll" | xargs -I{} mv -n {} lib/
+find lib -name "*.dll" | xargs -I{} mv {} bin/
 cp -r **/glm-*/glm include/
 rm -rf tmp
 
