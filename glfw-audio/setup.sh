@@ -8,10 +8,6 @@ cd dependency
 
 curl -L https://github.com/glfw/glfw/archive/3.3.2.tar.gz | tar -zxv --transform="s,^[^/]+/,glfw/,x;"
 
-# tinygltf for gltf loader
-
-curl -L https://github.com/syoyo/tinygltf/archive/v2.5.0.tar.gz | tar -zxv --transform="s,^[^/]+/,tinygltf/,x;"
-
 # portaudio for audio
 
 curl -L http://www.portaudio.com/archives/pa_stable_v190600_20161030.tgz | tar -zxv --transform="s,^[^/]+/,portaudio/,x;"
