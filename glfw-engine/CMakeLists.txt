@@ -13,12 +13,17 @@ endif()
 include_directories(dependency/src)
 file(GLOB dep "dependency/src/*.cpp" "dependency/src/*.c")
 
-# build
-set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -DTARGET=WIN32")
-include_directories(src/)
-file(GLOB src "src/*.cpp" "src/node/*.cpp")
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
+# target
+set(MIN_COMPILE "-O2 -Os -DNDEBUG -s")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${MIN_COMPILE}")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${MIN_COMPILE}")
+if (CMAKE_BUILD_TYPE STREQUAL Release)
 	set(SYSTEM WIN32)
 endif()
+
+# build
+
+include_directories(src/)
+file(GLOB src "src/*.cpp" "src/node/*.cpp")
 add_executable(${PROJECT_NAME} ${SYSTEM} ${src} ${dep})
 target_link_libraries(${PROJECT_NAME} glfw)
