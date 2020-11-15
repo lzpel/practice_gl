@@ -53,12 +53,9 @@ void Engine::Run(){
 	glfwSwapInterval(1);
 	Init();
 	while (!glfwWindowShouldClose(*window)){
-		float ratio;
-		int width, height;
 		//mat4x4 m, p, mvp;
-		glfwGetFramebufferSize(*window, &width, &height);
-		ratio = width / (float) height;
-		glViewport(0, 0, width, height);
+		glfwGetFramebufferSize(*window, &windowinfo.x, &windowinfo.y);
+		glViewport(0, 0, windowinfo.x, windowinfo.y);
 		this->NodeDraw();
 		glfwSwapBuffers(*window);
 		glfwPollEvents();
@@ -74,7 +71,7 @@ void Engine::Init(){
 void Engine::Draw() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	double t=glfwGetTime();
-	glClearColor(0, 0, 0, 0);
+	glClearColor(0.5, 0.5, 0.5, 0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBegin(GL_TRIANGLES);
 	glColor3f(0.5+0.5*sin(5*M_PI*t), 0.5+0.5*sin(7*M_PI*t), 0.5+0.5*sin(11*M_PI*t));

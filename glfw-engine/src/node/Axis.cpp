@@ -8,6 +8,7 @@
 void Axis::Init() {
 	static const int SIZE=5;
 	std::vector<GLfloat> axis;
+	axis.reserve(12*(3+2*(SIZE*2+1)));
 	for(int i=-SIZE;i<=SIZE;i++){
 		axis.push_back(i);axis.push_back(0);axis.push_back(SIZE);
 		axis.push_back(1);axis.push_back(1);axis.push_back(1);
