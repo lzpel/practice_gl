@@ -10,10 +10,15 @@ if(NOT TARGET glfw)
 endif()
 
 # libraries without CMake
-include_directories(dependency/src src/ src/node)
+include_directories(dependency/src)
 file(GLOB dep "dependency/src/*.cpp" "dependency/src/*.c")
 
-# target
+# build
+set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG -DTARGET=WIN32")
+include_directories(src/)
 file(GLOB src "src/*.cpp" "src/node/*.cpp")
-add_executable(${PROJECT_NAME} ${src} ${dep})
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+	set(SYSTEM WIN32)
+endif()
+add_executable(${PROJECT_NAME} ${SYSTEM} ${src} ${dep})
 target_link_libraries(${PROJECT_NAME} glfw)
