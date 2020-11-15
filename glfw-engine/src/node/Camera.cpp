@@ -5,30 +5,33 @@
 #include "Graphics.h"
 const char* FragmentShaderCode ="\
 #version 330 core\n\
-in vec3 normal;\n\
-in vec3 position;\n\
-in vec2 texcoord;\n\
-\n\
+in vec3 opos;\n\
+in vec3 onor;\n\
+in vec2 otex;\n\
+in vec3 oclr;\n\
 uniform sampler2D tex;\n\
-uniform vec3 sun_position; \n\
-uniform vec3 sun_color; \n\
-\n\
+out vec4 color;\n\
 void main() {\n\
-	float lum = max(dot(normal, normalize(sun_position)), 0.0);\n\
-	gl_FragColor = texture(tex, texcoord) * vec4((0.3 + 0.7 * lum) * sun_color, 1.0);\n\
-	gl_FragColor = gl_Color;\n\
+	color = texture2D(tex, otex)*vec4(oclr,1);\n\
 }\n\
 ";
 
 const char* VertexShaderCode ="\
 #version 330 core\n\
+layout(location = 0) in vec3 ipos;\n\
+layout(location = 1) in vec3 inor;\n\
+layout(location = 2) in vec2 itex;\n\
+layout(location = 3) in vec3 iclr;\n\
 uniform mat4 MVP;\n\
-out vec3 normal;\n\
+out vec3 opos;\n\
+out vec3 onor;\n\
+out vec2 otex;\n\
+out vec3 oclr;\n\
 void main(){\n\
-	gl_Position = MVP * gl_Vertex;\n\
-	gl_FrontColor = gl_Color;\n\
-	gl_TexCoord[0] = gl_MultiTexCoord0;\n\
-	normal = normalize( mat3(MVP) * gl_Normal);\n\
+	opos = (MVP * vec4(ipos,1)).xyz;\n\
+	onor = normalize(mat3(MVP)*inor);\n\
+	otex = itex;\n\
+	oclr = iclr;\n\
 }";
 
 glm::mat4 genView(glm::vec3 pos, glm::vec3 lookat) {
@@ -43,7 +46,7 @@ glm::mat4 genView(glm::vec3 pos, glm::vec3 lookat) {
 }
 
 glm::mat4 genMVP(glm::mat4 view_mat, glm::mat4 model_mat, float fov, int w, int h) {
-	glm::mat4 Projection = glm::perspective(glm::radians(fov), (float) w / (float) h, 0.01f, 1000.0f);
+	glm::mat4 Projection = glm::perspective(glm::radians(fov), (float) w / (float) h, 0.01f, 10000.0f);
 
 	// Or, for an ortho camera :
 	// glm::mat4 Projection = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f);
@@ -62,67 +65,9 @@ Camera::Camera(){
 	name="camera";
 }
 
-void Camera::Init() {
-	char message[256];
-	// Create the shaders
-	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+void Camera::Init() {}
 
-	GLint Result = GL_FALSE;
-	int InfoLogLength;
-
-	// Compile Vertex Shader
-	glShaderSource(VertexShaderID, 1, &VertexShaderCode, NULL);
-	glCompileShader(VertexShaderID);
-
-	// Check Vertex Shader
-	glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &Result);
-	glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if (InfoLogLength > 0) {
-		glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, message);
-		printf("%s\n", message);
-	}
-
-	// Compile Fragment Shader
-	glShaderSource(FragmentShaderID, 1, &FragmentShaderCode, NULL);
-	glCompileShader(FragmentShaderID);
-
-	// Check Fragment Shader
-	glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &Result);
-	glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if (InfoLogLength > 0) {
-		glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, message);
-		printf("%s\n", message);
-	}
-
-	// Link the program
-	printf("Linking program\n");
-	GLuint ProgramID = glCreateProgram();
-	glAttachShader(ProgramID, VertexShaderID);
-	glAttachShader(ProgramID, FragmentShaderID);
-	glLinkProgram(ProgramID);
-
-	// Check the program
-	glGetProgramiv(ProgramID, GL_LINK_STATUS, &Result);
-	glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if (InfoLogLength > 0) {
-		glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, message);
-		printf("%s\n", message);
-	}
-
-	glDetachShader(ProgramID, VertexShaderID);
-	glDetachShader(ProgramID, FragmentShaderID);
-
-	glDeleteShader(VertexShaderID);
-	glDeleteShader(FragmentShaderID);
-	glUseProgram(ProgramID);
-	shaderid = ProgramID;
-	shadermvpid = glGetUniformLocation(shaderid, "MVP");
-}
-
-void Camera::Terminate() {
-	glDeleteProgram(shaderid);
-}
+void Camera::Terminate() {}
 
 void Camera::Draw() {
 	Stat& window=NodeState("WINDOW");
@@ -147,7 +92,9 @@ void Camera::Draw() {
 
 	// build a model-view-projection
 	glm::mat4 mvp = genMVP(view_mat, model_mat, 45.0f, window.x, window.y);
-	glUniformMatrix4fv(shadermvpid, 1, GL_FALSE, &mvp[0][0]);
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(&mvp[0][0]);
+	//glUniformMatrix4fv(shadermvpid, 1, GL_FALSE, &mvp[0][0]);
 	//glUniform3fv(sun_position_u, 1, &sun_position[0]);
 	//glUniform3fv(sun_color_u, 1, &sun_color[0]);
 }

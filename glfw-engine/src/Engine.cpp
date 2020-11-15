@@ -53,17 +53,22 @@ void Engine::Run(){
 	windowinfo.frq=glfwGetTimerFrequency();
 	gladLoadGL(glfwGetProcAddress);
 	Init();
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
 	while (!glfwWindowShouldClose(*window)){
 		windowinfo.time=glfwGetTimerValue();
 		glfwGetFramebufferSize(*window, &windowinfo.x, &windowinfo.y);
 		glViewport(0, 0, windowinfo.x, windowinfo.y);
-		glClear(GL_COLOR_BUFFER_BIT);
-		glClearColor(0.5, 0.5, 0.5, 0);
+		glClearColor(0.2, 0.2, 0.2, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		this->NodeDraw();
 		glFlush();
 		glfwSwapBuffers(*window);
 		glfwPollEvents();
 	}
+	glDisable(GL_DEPTH_TEST);
 	this->NodeTerminate();
 	glfwDestroyWindow(*(GLFWwindow **)(Window));
 	glfwTerminate();

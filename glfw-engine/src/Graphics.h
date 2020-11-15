@@ -10,4 +10,5 @@
 
 #include <glad/gl.h>
 #include <glm/gtc/matrix_transform.hpp>
+signed	genProgram(const char*vsrc,const char*fsrc);
 #endif //GLPRACTICE_GRAPHICS_H
