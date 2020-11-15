@@ -12,8 +12,7 @@
 class Node{
 public:
 	struct Stat{
-		int x,y,z;
-		float fx,fy,fz;
+		int x,y,time,frq;
 		Node* node;
 		const char* text;
 	};
@@ -44,9 +43,13 @@ public:
 	/// 自分自身と子孫を描画する
 	void NodeDraw();
 	///@fn
-	/// 親を遡り
+	/// 子供を検索する
+	Node* NodeFind(const char* key);
+	///@fn
+	/// 親を遡り状態を取得する。
 	Stat& NodeState(const char* key);
-	void NodeState(const char* key,int x,int y=0,int z=0);
+	void NodeState(const char* key,int x,int y=0);
+public:
 	void Move(float x,float y,float z);
 private:
 	/// @fn

@@ -3,10 +3,12 @@
 //
 
 #include "Node.h"
-
+#include "string.h"
 Node::Node(bool isStateMachine){
+	//最低限必要
 	parent=0;
 	status=0;
+	name=0;
 	if(isStateMachine){
 		status=new std::map<std::string,Node::Stat>();
 	}
@@ -38,6 +40,12 @@ void Node::NodeDraw() {
 		(*itr)->NodeDraw();
 	}
 }
+Node* Node::NodeFind(const char* key){
+	for(auto itr = children.begin(); itr != children.end(); ++itr) {
+		if(strcmp((*itr)->name,key)==0)return *itr;
+	}
+	return 0;
+}
 
 Node::Stat& Node::NodeState(const char *key) {
 	Node*statemachine=this;
@@ -45,9 +53,9 @@ Node::Stat& Node::NodeState(const char *key) {
 	return (*statemachine->status)[key];
 }
 
-void Node::NodeState(const char *key,int x,int y,int z) {
+void Node::NodeState(const char *key,int x,int y) {
 	Stat&s=NodeState(key);
-	s.x=x;s.y=y;s.z=z;
+	s.x=x;s.y=y;
 }
 
 void Node::Move(float x, float y, float z) {

@@ -6,6 +6,7 @@
 
 #include "Node/Axis.h"
 #include "Node/Camera.h"
+#include "Node/Triangle.h"
 
 #include "Graphics.h"
 
@@ -24,11 +25,12 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
-Engine::Engine(int w, int h, const char *title) :Node(true){
+Engine::Engine(int w, int h, const char *title):Node::Node(true){
 	Stat&windowinfo=NodeState("WINDOW");
 	windowinfo.x=w;
 	windowinfo.y=h;
 	windowinfo.text=title;
+	name="Engine";
 }
 
 void Engine::Run(){
@@ -41,49 +43,41 @@ void Engine::Run(){
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
 	*window = glfwCreateWindow(windowinfo.x, windowinfo.y, windowinfo.text, NULL, NULL);
-	if (!window){
+	if (!*window){
 		glfwTerminate();
 		Log("window creation failed",LOGERROR);
 	}
-
 	glfwSetKeyCallback(*window, key_callback);
-
 	glfwMakeContextCurrent(*window);
-	gladLoadGL(glfwGetProcAddress);
 	glfwSwapInterval(1);
+	windowinfo.frq=glfwGetTimerFrequency();
+	gladLoadGL(glfwGetProcAddress);
 	Init();
 	while (!glfwWindowShouldClose(*window)){
-		//mat4x4 m, p, mvp;
+		windowinfo.time=glfwGetTimerValue();
 		glfwGetFramebufferSize(*window, &windowinfo.x, &windowinfo.y);
 		glViewport(0, 0, windowinfo.x, windowinfo.y);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glClearColor(0.5, 0.5, 0.5, 0);
 		this->NodeDraw();
+		glFlush();
 		glfwSwapBuffers(*window);
 		glfwPollEvents();
 	}
 	this->NodeTerminate();
+	glfwDestroyWindow(*(GLFWwindow **)(Window));
+	glfwTerminate();
 }
 void Engine::Init(){
 	Node*camera;
 	NodeNew(camera=new Camera());
 	NodeNew(new Axis());
+	NodeNew(new Triangle());
 	camera->Move(0,1,5);
 }
 void Engine::Draw() {
-	glClear(GL_COLOR_BUFFER_BIT);
-	double t=glfwGetTime();
-	glClearColor(0.5, 0.5, 0.5, 0);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glBegin(GL_TRIANGLES);
-	glColor3f(0.5+0.5*sin(5*M_PI*t), 0.5+0.5*sin(7*M_PI*t), 0.5+0.5*sin(11*M_PI*t));
-	glVertex2f(sin(2*M_PI*t), sqrt(3));
-	glVertex2f(-1, 0);
-	glVertex2f(1, 0);
-	glEnd();
-	glFlush();
 }
 void Engine::Terminate() {
-	glfwDestroyWindow(*(GLFWwindow **)(Window));
-	glfwTerminate();
 }
 
 char Log(const char *message, LOGLEVEL level) {

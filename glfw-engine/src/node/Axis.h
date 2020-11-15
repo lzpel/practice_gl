@@ -10,6 +10,7 @@
 class Axis :virtual public Node{
 	unsigned vbuf,size;
 public:
+	Axis();
 	void Init();
 	void Draw();
 	void Terminate();

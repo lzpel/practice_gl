@@ -5,6 +5,9 @@
 #include "Axis.h"
 #include "Graphics.h"
 #include<vector>
+Axis::Axis(){
+	name="Axis";
+}
 void Axis::Init() {
 	static const int SIZE=5;
 	std::vector<GLfloat> axis;

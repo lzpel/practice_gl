@@ -8,7 +8,7 @@
 
 #include "Node.h"
 
-class Engine : virtual public Node{
+class Engine : public Node{
 	void* Window;
 public:
 	const char* WindowTitle;

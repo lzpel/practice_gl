@@ -15,5 +15,5 @@ file(GLOB dep "dependency/src/*.cpp" "dependency/src/*.c")
 
 # target
 file(GLOB src "src/*.cpp" "src/node/*.cpp")
-add_executable(${PROJECT_NAME} ${src} ${dep} src/Graphics.h src/Graphics.cpp)
+add_executable(${PROJECT_NAME} ${src} ${dep})
 target_link_libraries(${PROJECT_NAME} glfw)

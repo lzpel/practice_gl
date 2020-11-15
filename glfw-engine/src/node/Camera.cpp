@@ -59,6 +59,7 @@ Camera::Camera(){
 	//メートルに準じる
 	up[0]=up[1]=up[2]=lookat[0]=lookat[1]=lookat[2]=0;up[1]=1;
 	Move(0,1,2);
+	name="camera";
 }
 
 void Camera::Init() {
