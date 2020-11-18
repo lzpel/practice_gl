@@ -19,43 +19,7 @@
 #undef TINYGLTF_IMPLEMENTATION
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
-#include<iostream>
-
-
-const char *fsrc = "#version 330 core\n\
-in vec3 normal;\n\
-in vec3 position;\n\
-in vec2 texcoord;\n\
-\n\
-uniform sampler2D tex;\n\
-uniform vec3 sun_position; \n\
-uniform vec3 sun_color; \n\
-\n\
-out vec4 color;\n\
-void main() {\n\
-	float lum = max(dot(normal, normalize(sun_position)), 0.0);\n\
-	color = texture(tex, texcoord); // * vec4((0.3 + 0.7 * lum) * sun_color, 1.0);\n\
-}\n\
-";
-
-const char *vsrc = "#version 330 compatibility\n\
-layout(location = 0) in vec3 in_vertex;\n\
-layout(location = 1) in vec3 in_normal;\n\
-layout(location = 2) in vec2 in_texcoord;\n\
-\n\
-uniform mat4 MVP;\n\
-\n\
-out vec3 normal;\n\
-out vec3 position;\n\
-out vec2 texcoord;\n\
-\n\
-void main(){\n\
-	gl_Position = gl_ModelViewProjectionMatrix * vec4(in_vertex, 1);\n\
-	position = gl_Position.xyz;\n\
-	normal = normalize(mat3(gl_ModelViewProjectionMatrix) * in_normal);\n\
-	position = in_vertex;\n\
-	texcoord = in_texcoord;\n\
-}";
+#include<stdio.h>
 
 
 bool loadModel(tinygltf::Model &model, const char *filename) {
@@ -66,17 +30,17 @@ bool loadModel(tinygltf::Model &model, const char *filename) {
 	bool res = loader.LoadASCIIFromFile(&model, &err, &warn, filename) ||
 	           loader.LoadBinaryFromFile(&model, &err, &warn, filename);
 	if (!warn.empty()) {
-		std::cout << "WARN: " << warn << std::endl;
+		printf("WARN: %s\n", warn.c_str());
 	}
 
 	if (!err.empty()) {
-		std::cout << "ERR: " << err << std::endl;
+		printf("ERR: %s\n", err.c_str());
 	}
 
 	if (!res)
-		std::cout << "Failed to load glTF: " << filename << std::endl;
+		printf("Failed to load glTF: %s\n", filename);
 	else
-		std::cout << "Loaded glTF: " << filename << std::endl;
+		printf("Loaded glTF: %s\n", filename);
 
 	return res;
 }
@@ -86,7 +50,7 @@ std::map<int, GLuint> bindMesh(std::map<int, GLuint> vbos,
 	for (size_t i = 0; i < model.bufferViews.size(); ++i) {
 		const tinygltf::BufferView &bufferView = model.bufferViews[i];
 		if (bufferView.target == 0) {  // TODO impl drawarrays
-			std::cout << "WARN: bufferView.target is zero" << std::endl;
+			printf("WARN: bufferView.target is zero\n");
 			continue;  // Unsupported bufferView.
 			/*
 			  From spec2.0 readme:
@@ -99,16 +63,14 @@ std::map<int, GLuint> bindMesh(std::map<int, GLuint> vbos,
 		}
 
 		const tinygltf::Buffer &buffer = model.buffers[bufferView.buffer];
-		std::cout << "bufferview.target " << bufferView.target << std::endl;
+		printf("bufferview.target %d\n", bufferView.target);
 
 		GLuint vbo;
 		glGenBuffers(1, &vbo);
 		vbos[i] = vbo;
 		glBindBuffer(bufferView.target, vbo);
 
-		std::cout << "buffer.data.size = " << buffer.data.size()
-		          << ", bufferview.byteOffset = " << bufferView.byteOffset
-		          << std::endl;
+		printf("buffer.data.size = %d, bufferview.byteOffset = %d\n", buffer.data.size(), bufferView.byteOffset);
 
 		glBufferData(bufferView.target, bufferView.byteLength,
 		             &buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);
@@ -138,7 +100,7 @@ std::map<int, GLuint> bindMesh(std::map<int, GLuint> vbos,
 				glVertexAttribPointer(vaa, size, accessor.componentType, accessor.normalized ? GL_TRUE : GL_FALSE,
 				                      byteStride, BUFFER_OFFSET(accessor.byteOffset));
 			} else {
-				std::cout << "vaa missing: " << attrib.first << std::endl;
+				printf("vaa missing: %s\n", attrib.first.c_str());
 			}
 		}
 
@@ -256,38 +218,35 @@ void drawModel(GLuint vao, tinygltf::Model &model) {
 
 void dbgModel(tinygltf::Model &model) {
 	for (auto &mesh : model.meshes) {
-		std::cout << "mesh : " << mesh.name << std::endl;
+		printf("mesh : %s", mesh.name.c_str());
 		for (auto &primitive : mesh.primitives) {
 			const tinygltf::Accessor &indexAccessor =
 					model.accessors[primitive.indices];
 
-			std::cout << "indexaccessor: count " << indexAccessor.count << ", type "
-			          << indexAccessor.componentType << std::endl;
+			printf("indexaccessor: count %d, type %d\n", indexAccessor.count, indexAccessor.componentType);
 
 			tinygltf::Material &mat = model.materials[primitive.material];
 			for (auto &mats : mat.values) {
-				std::cout << "mat : " << mats.first.c_str() << std::endl;
+				printf("mat : %s\n", mats.first.c_str());
 			}
 
 			for (auto &image : model.images) {
-				std::cout << "image name : " << image.uri << std::endl;
-				std::cout << "  size : " << image.image.size() << std::endl;
-				std::cout << "  w/h : " << image.width << "/" << image.height
-				          << std::endl;
+				printf("image name : %s\n", image.uri.c_str());
+				printf("  size : %s\n", image.image.size());
+				printf("  w/h : %d/%d\n", image.width, image.height);
 			}
 
-			std::cout << "indices : " << primitive.indices << std::endl;
-			std::cout << "mode     : "
-			          << "(" << primitive.mode << ")" << std::endl;
+			printf("indices : %d\n", primitive.indices);
+			printf("mode     : (%d)\n", primitive.mode);
 
 			for (auto &attrib : primitive.attributes) {
-				std::cout << "attribute : " << attrib.first.c_str() << std::endl;
+				printf("attribute : %s\n", attrib.first.c_str());
 			}
 		}
 	}
 }
 
-Model::Model( const char *filename) {
+Model::Model(const char *filename) {
 	loadModel(model, filename);
 }
 
@@ -296,7 +255,7 @@ Model::~Model() {
 }
 
 void Model::Init() {
-	vao=bindModel(model);
+	vao = bindModel(model);
 }
 
 void Model::Draw() {
