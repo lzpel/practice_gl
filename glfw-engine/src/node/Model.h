@@ -10,7 +10,7 @@
 
 class Model : public virtual Node{
 	tinygltf::Model model;
-	int vao,shader;
+	int vao;
 public:
 	Model(const char*filename);
 	virtual ~Model();

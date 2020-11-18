@@ -4,9 +4,11 @@
 
 #include "Graphics.h"
 #include <stdio.h>
+#include <fstream>
 
 signed genProgram(const char*vsrc,const char*fsrc){
-	char message[256];
+	printf("GL_VERSION=%s\nGL_SHADING_LANGUAGE_VERSION=%s\n",glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
+	char message[1024];
 	// Create the shaders
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
@@ -14,28 +16,28 @@ signed genProgram(const char*vsrc,const char*fsrc){
 	GLint Result = GL_FALSE;
 	int InfoLogLength;
 
-	// Compile Vertex Shader
+	printf("Compile Vertex Shader\n");
 	glShaderSource(VertexShaderID, 1, &vsrc, NULL);
 	glCompileShader(VertexShaderID);
-
-	// Check Vertex Shader
 	glGetShaderiv(VertexShaderID, GL_COMPILE_STATUS, &Result);
 	glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
 	if (InfoLogLength > 0) {
-		glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, message);
+		glGetShaderInfoLog(VertexShaderID, sizeof(message), NULL, message);
+		glDeleteShader(VertexShaderID);
 		printf("%s\n", message);
+		return -1;
 	}
 
-	// Compile Fragment Shader
+	printf("Compile Fragment Shader\n");
 	glShaderSource(FragmentShaderID, 1, &fsrc, NULL);
 	glCompileShader(FragmentShaderID);
-
-	// Check Fragment Shader
 	glGetShaderiv(FragmentShaderID, GL_COMPILE_STATUS, &Result);
 	glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
 	if (InfoLogLength > 0) {
 		glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, message);
+		glDeleteShader(FragmentShaderID);
 		printf("%s\n", message);
+		return -1;
 	}
 
 	// Link the program
@@ -44,21 +46,43 @@ signed genProgram(const char*vsrc,const char*fsrc){
 	glAttachShader(ProgramID, VertexShaderID);
 	glAttachShader(ProgramID, FragmentShaderID);
 	glLinkProgram(ProgramID);
-
-	// Check the program
 	glGetProgramiv(ProgramID, GL_LINK_STATUS, &Result);
 	glGetProgramiv(ProgramID, GL_INFO_LOG_LENGTH, &InfoLogLength);
 	if (InfoLogLength > 0) {
 		glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, message);
+		glDeleteProgram(ProgramID);
 		printf("%s\n", message);
+		return -1;
 	}
-
 	glDetachShader(ProgramID, VertexShaderID);
 	glDetachShader(ProgramID, FragmentShaderID);
-
 	glDeleteShader(VertexShaderID);
 	glDeleteShader(FragmentShaderID);
-	//glUseProgram(ProgramID);
+	glCheckError();
 	return  ProgramID;
-	//shadermvpid = glGetUniformLocation(shaderid, "MVP");
+}
+std::string readAll(std::string filePath){
+	std::ifstream ifs(filePath);
+	return std::string(std::istreambuf_iterator<char>(ifs), std::istreambuf_iterator<char>());
+}
+
+signed genProgramFromFile(const char*vsrc,const char*fsrc){
+	return genProgram(readAll(vsrc).c_str(),readAll(fsrc).c_str());
+}
+GLenum glCheckError_(const char *file, int line){
+	GLenum errorCode;
+	while ((errorCode = glGetError()) != GL_NO_ERROR){
+		const char* error;
+		switch (errorCode){
+			case GL_INVALID_ENUM:                  error = "INVALID_ENUM"; break;
+			case GL_INVALID_VALUE:                 error = "INVALID_VALUE"; break;
+			case GL_INVALID_OPERATION:             error = "INVALID_OPERATION"; break;
+			case GL_STACK_OVERFLOW:                error = "STACK_OVERFLOW"; break;
+			case GL_STACK_UNDERFLOW:               error = "STACK_UNDERFLOW"; break;
+			case GL_OUT_OF_MEMORY:                 error = "OUT_OF_MEMORY"; break;
+			case GL_INVALID_FRAMEBUFFER_OPERATION: error = "INVALID_FRAMEBUFFER_OPERATION"; break;
+		}
+		printf_s("%s|%s(%d)\n",error,file,line);
+	}
+	return errorCode;
 }

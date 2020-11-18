@@ -23,6 +23,6 @@ public:
 	virtual void Terminate();
 };
 enum LOGLEVEL{LOGINFO,LOGERROR};
-char Log(const char*message,LOGLEVEL level=LOGLEVEL::LOGINFO);
+char  Log(const char*message,LOGLEVEL);
 
 #endif //GLPRACTICE_ENGINE_H

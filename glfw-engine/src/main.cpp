@@ -5,14 +5,16 @@
 #include "Node/Model.h"
 #include <math.h>
 
+//TODO 3.3 core profile に置き換えてバイナリサイズを下げる
+
 class MyEngine:public Engine{
 public:
 	Node*camera;
 	void Init(){
 		NodeNew(camera=new Camera());
 		NodeNew(new Axis());
-		NodeNew(new Triangle());
-		NodeNew(new Model("C:/Users/misum/Downloads/mew_pokemon/scene.gltf"));
+		//NodeNew(new Triangle());
+		NodeNew(new Model(NodeState("FILE").text));
 	}
 	void Draw() {
 		Stat&w=NodeState("WINDOW");
@@ -22,6 +24,7 @@ public:
 };
 int main(int argc, const char** argv){
 	MyEngine engine;
+	engine.NodeState("FILE").text=argc>1?argv[1]:"scene.gltf";
 	engine.NodeState("WINDOW",640,480);
 	engine.Run();
 	return 0;

@@ -11,9 +11,10 @@ endif()
 
 # libraries without CMake
 include_directories(dependency/src)
-file(GLOB dep "dependency/src/*.cpp" "dependency/src/*.c")
+file(GLOB_RECURSE dep "dependency/src/*.cpp" "dependency/src/*.c")
 
-# target
+# release
+
 set(MIN_COMPILE "-O2 -Os -DNDEBUG -s")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${MIN_COMPILE}")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${MIN_COMPILE}")
@@ -24,6 +25,6 @@ endif()
 # build
 
 include_directories(src/)
-file(GLOB src "src/*.cpp" "src/node/*.cpp")
+file(GLOB_RECURSE src "src/*.cpp" "src/*.c")
 add_executable(${PROJECT_NAME} ${SYSTEM} ${src} ${dep})
 target_link_libraries(${PROJECT_NAME} glfw)

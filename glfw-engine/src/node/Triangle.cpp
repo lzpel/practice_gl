@@ -16,6 +16,7 @@ void Triangle::Draw() {
 	m[5]=0.5+0.5*sin(11*M_PI*w.time/w.frq);
 	m[06]=+1;
 	m[12]=-1;
+	/*
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -24,6 +25,7 @@ void Triangle::Draw() {
 	glDrawArrays(GL_TRIANGLES,0,3);
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
+	 */
 }
 void Triangle::Terminate() {
 

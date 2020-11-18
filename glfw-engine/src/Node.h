@@ -13,8 +13,9 @@ class Node{
 public:
 	struct Stat{
 		int x,y,time,frq;
-		Node* node;
+		signed shader;
 		const char* text;
+		Node* node;
 	};
 	float pos[3];
 	const char* name;

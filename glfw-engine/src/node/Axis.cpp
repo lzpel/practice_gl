@@ -9,6 +9,7 @@ Axis::Axis(){
 	name="Axis";
 }
 void Axis::Init() {
+	Stat&w=NodeState("WINDOW");
 	static const int SIZE=5;
 	std::vector<GLfloat> axis;
 	axis.reserve(12*(3+2*(SIZE*2+1)));
@@ -38,22 +39,40 @@ void Axis::Init() {
 	axis.push_back(0);axis.push_back(0);axis.push_back(SIZE*2);
 	axis.push_back(0);axis.push_back(0);axis.push_back(1);
 	GLuint buf;
+
 	glGenBuffers(1,&buf);
 	glBindBuffer(GL_ARRAY_BUFFER,buf);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 	glBufferData(GL_ARRAY_BUFFER, axis.size()*sizeof(GLfloat), &axis[0], GL_STATIC_DRAW);
+	glCheckError();
+
+	glGenVertexArrays( 1, &vao );
+	glBindVertexArray( vao );
+	glCheckError();
+
+	GLint position = glGetAttribLocation(w.shader, "pos");
+	glCheckError();
+	glEnableVertexAttribArray( position );
+	glCheckError();
+	glVertexAttribPointer( position, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*6, 0 );
+	glCheckError();
+
+	glBindVertexArray( 0 );
+	glBindBuffer(GL_ARRAY_BUFFER,0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
+	glCheckError();
+	//glEnableVertexAttribA
 	vbuf=buf;
 	size=axis.size();
 }
 void Axis::Draw() {
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
-	glBindBuffer(GL_ARRAY_BUFFER, vbuf);
-	glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*6, (char*)(sizeof(GLfloat)*0));
-	glColorPointer(3,GL_FLOAT,sizeof(GL_FLOAT)*6,(char*)(sizeof(GL_FLOAT)*3));
+	glCheckError();
+	glBindVertexArray( vao );
 	glDrawArrays(GL_LINES,0,size/6);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
+	glBindVertexArray( 0 );
+	glCheckError();
 }
 void Axis::Terminate() {
+	glDeleteVertexArrays(1,&vao);
 	glDeleteBuffers(1,&vbuf);
 }

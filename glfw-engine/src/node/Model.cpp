@@ -22,7 +22,7 @@
 #include<iostream>
 
 
-const char* fsrc ="#version 330 core\n\
+const char *fsrc = "#version 330 core\n\
 in vec3 normal;\n\
 in vec3 position;\n\
 in vec2 texcoord;\n\
@@ -38,7 +38,7 @@ void main() {\n\
 }\n\
 ";
 
-const char* vsrc ="#version 330 core\n\
+const char *vsrc = "#version 330 compatibility\n\
 layout(location = 0) in vec3 in_vertex;\n\
 layout(location = 1) in vec3 in_normal;\n\
 layout(location = 2) in vec2 in_texcoord;\n\
@@ -64,7 +64,7 @@ bool loadModel(tinygltf::Model &model, const char *filename) {
 	std::string warn;
 
 	bool res = loader.LoadASCIIFromFile(&model, &err, &warn, filename) ||
-			   loader.LoadBinaryFromFile(&model, &err, &warn, filename);
+	           loader.LoadBinaryFromFile(&model, &err, &warn, filename);
 	if (!warn.empty()) {
 		std::cout << "WARN: " << warn << std::endl;
 	}
@@ -82,7 +82,7 @@ bool loadModel(tinygltf::Model &model, const char *filename) {
 }
 
 std::map<int, GLuint> bindMesh(std::map<int, GLuint> vbos,
-							   tinygltf::Model &model, tinygltf::Mesh &mesh) {
+                               tinygltf::Model &model, tinygltf::Mesh &mesh) {
 	for (size_t i = 0; i < model.bufferViews.size(); ++i) {
 		const tinygltf::BufferView &bufferView = model.bufferViews[i];
 		if (bufferView.target == 0) {  // TODO impl drawarrays
@@ -107,11 +107,11 @@ std::map<int, GLuint> bindMesh(std::map<int, GLuint> vbos,
 		glBindBuffer(bufferView.target, vbo);
 
 		std::cout << "buffer.data.size = " << buffer.data.size()
-				  << ", bufferview.byteOffset = " << bufferView.byteOffset
-				  << std::endl;
+		          << ", bufferview.byteOffset = " << bufferView.byteOffset
+		          << std::endl;
 
 		glBufferData(bufferView.target, bufferView.byteLength,
-					 &buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);
+		             &buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);
 	}
 
 	for (size_t i = 0; i < mesh.primitives.size(); ++i) {
@@ -135,11 +135,11 @@ std::map<int, GLuint> bindMesh(std::map<int, GLuint> vbos,
 			if (attrib.first.compare("TEXCOORD_0") == 0) vaa = 2;
 			if (vaa > -1) {
 				glEnableVertexAttribArray(vaa);
-				glVertexAttribPointer(vaa, size, accessor.componentType,
-									  accessor.normalized ? GL_TRUE : GL_FALSE,
-									  byteStride, BUFFER_OFFSET(accessor.byteOffset));
-			} else
+				glVertexAttribPointer(vaa, size, accessor.componentType, accessor.normalized ? GL_TRUE : GL_FALSE,
+				                      byteStride, BUFFER_OFFSET(accessor.byteOffset));
+			} else {
 				std::cout << "vaa missing: " << attrib.first << std::endl;
+			}
 		}
 
 		if (model.textures.size() > 0) {
@@ -182,7 +182,7 @@ std::map<int, GLuint> bindMesh(std::map<int, GLuint> vbos,
 				}
 
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width, image.height, 0,
-							 format, type, &image.image.at(0));
+				             format, type, &image.image.at(0));
 			}
 		}
 	}
@@ -192,7 +192,7 @@ std::map<int, GLuint> bindMesh(std::map<int, GLuint> vbos,
 
 // bind models
 void bindModelNodes(std::map<int, GLuint> vbos, tinygltf::Model &model,
-					tinygltf::Node &node) {
+                    tinygltf::Node &node) {
 	if ((node.mesh >= 0) && (node.mesh < model.meshes.size())) {
 		bindMesh(vbos, model, model.meshes[node.mesh]);
 	}
@@ -229,9 +229,9 @@ void drawMesh(tinygltf::Model &model, tinygltf::Mesh &mesh) {
 		tinygltf::Primitive primitive = mesh.primitives[i];
 		tinygltf::Accessor indexAccessor = model.accessors[primitive.indices];
 
-		glDrawElements(primitive.mode, indexAccessor.count,
-					   indexAccessor.componentType,
-					   BUFFER_OFFSET(indexAccessor.byteOffset));
+		glCheckError();
+		glDrawElements(primitive.mode, indexAccessor.count, indexAccessor.componentType, BUFFER_OFFSET(indexAccessor.byteOffset));
+		glCheckError();
 	}
 }
 
@@ -264,7 +264,7 @@ void dbgModel(tinygltf::Model &model) {
 					model.accessors[primitive.indices];
 
 			std::cout << "indexaccessor: count " << indexAccessor.count << ", type "
-					  << indexAccessor.componentType << std::endl;
+			          << indexAccessor.componentType << std::endl;
 
 			tinygltf::Material &mat = model.materials[primitive.material];
 			for (auto &mats : mat.values) {
@@ -275,12 +275,12 @@ void dbgModel(tinygltf::Model &model) {
 				std::cout << "image name : " << image.uri << std::endl;
 				std::cout << "  size : " << image.image.size() << std::endl;
 				std::cout << "  w/h : " << image.width << "/" << image.height
-						  << std::endl;
+				          << std::endl;
 			}
 
 			std::cout << "indices : " << primitive.indices << std::endl;
 			std::cout << "mode     : "
-					  << "(" << primitive.mode << ")" << std::endl;
+			          << "(" << primitive.mode << ")" << std::endl;
 
 			for (auto &attrib : primitive.attributes) {
 				std::cout << "attribute : " << attrib.first.c_str() << std::endl;
@@ -289,8 +289,7 @@ void dbgModel(tinygltf::Model &model) {
 	}
 }
 
-Model::Model(
-		const char *filename) {
+Model::Model( const char *filename) {
 	loadModel(model, filename);
 }
 
@@ -299,14 +298,13 @@ Model::~Model() {
 }
 
 void Model::Init() {
-	shader=genProgram(vsrc,fsrc);
-	vao = bindModel(model);
+	vao=bindModel(model);
 }
 
 void Model::Draw() {
-	glUseProgram(shader);
+	glCheckError();
 	drawModel(vao, model);
-	glUseProgram(0);
+	glCheckError();
 }
 
 void Model::Terminate() {

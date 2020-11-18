@@ -19,3 +19,4 @@ curl -L https://github.com/syoyo/tinygltf/archive/v2.5.0.tar.gz | tar -zxv --tra
 # glad for opengl loader
 
 cp -r glfw/deps/glad* src/
+
