@@ -37,16 +37,12 @@ void Engine::Run() {
 	Stat &windowinfo = NodeState("WINDOW");
 	GLFWwindow **window = (GLFWwindow **) (&Window);
 	{
-		if (!glfwInit())Log("Initiation Failed", LOGERROR);
+		glfwInit();
 		glfwSetErrorCallback(error_callback);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		*window = glfwCreateWindow(windowinfo.x, windowinfo.y, windowinfo.text, NULL, NULL);
-		if (!*window) {
-			glfwTerminate();
-			Log("window creation failed", LOGERROR);
-		}
 		glfwSetKeyCallback(*window, key_callback);
 		glfwMakeContextCurrent(*window);
 		glfwSwapInterval(1);
@@ -60,9 +56,7 @@ void Engine::Run() {
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);axisが表示されないのでコメントアウト
 		//glEnable(GL_BLEND);
 		glClearColor(0.2, 0.2, 0.2, 1.0);
-		glClearDepth(1.0);
 		glUseProgram(windowinfo.shader=genProgramFromFile("standard.vert","standard.frag"));
-		glCheckError();
 	}
 	Init();
 	while (!glfwWindowShouldClose(*window)) {
@@ -73,6 +67,7 @@ void Engine::Run() {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			this->NodeDraw();
 			glFlush();
+			glCheckError();
 		}
 		glfwSwapBuffers(*window);
 		glfwPollEvents();
@@ -95,9 +90,4 @@ void Engine::Draw() {
 }
 
 void Engine::Terminate() {
-}
-
-char Log(const char *message, LOGLEVEL level) {
-	fputs(message, stderr);
-	return 0;
 }

@@ -229,9 +229,7 @@ void drawMesh(tinygltf::Model &model, tinygltf::Mesh &mesh) {
 		tinygltf::Primitive primitive = mesh.primitives[i];
 		tinygltf::Accessor indexAccessor = model.accessors[primitive.indices];
 
-		glCheckError();
 		glDrawElements(primitive.mode, indexAccessor.count, indexAccessor.componentType, BUFFER_OFFSET(indexAccessor.byteOffset));
-		glCheckError();
 	}
 }
 
@@ -302,9 +300,7 @@ void Model::Init() {
 }
 
 void Model::Draw() {
-	glCheckError();
 	drawModel(vao, model);
-	glCheckError();
 }
 
 void Model::Terminate() {

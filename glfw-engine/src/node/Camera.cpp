@@ -54,9 +54,7 @@ void Camera::Draw() {
 
 	// build a model-view-projection
 	glm::mat4 mvp = genMVP(view_mat, model_mat, 45.0f, window.x, window.y);
-	glCheckError();
 	glUniformMatrix4fv(glGetUniformLocation(window.shader, "mvp"), 1, GL_FALSE, &mvp[0][0]);
 	glUniform3fv(glGetUniformLocation(window.shader, "lp"), 1, &sun_position[0]);
 	glUniform3fv(glGetUniformLocation(window.shader, "lc"), 1, &sun_color[0]);
-	glCheckError();
 }

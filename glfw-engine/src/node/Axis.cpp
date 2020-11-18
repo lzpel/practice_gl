@@ -12,65 +12,46 @@ void Axis::Init() {
 	Stat&w=NodeState("WINDOW");
 	static const int SIZE=5;
 	std::vector<GLfloat> axis;
-	axis.reserve(12*(3+2*(SIZE*2+1)));
+	axis.reserve(6*(3+2*(SIZE*2+1)));
 	for(int i=-SIZE;i<=SIZE;i++){
 		axis.push_back(i);axis.push_back(0);axis.push_back(SIZE);
-		axis.push_back(1);axis.push_back(1);axis.push_back(1);
 		axis.push_back(i);axis.push_back(0);axis.push_back(-SIZE);
-		axis.push_back(1);axis.push_back(1);axis.push_back(1);
 
 		axis.push_back(SIZE);axis.push_back(0);axis.push_back(i);
-		axis.push_back(1);axis.push_back(1);axis.push_back(1);
 		axis.push_back(-SIZE);axis.push_back(0);axis.push_back(i);
-		axis.push_back(1);axis.push_back(1);axis.push_back(1);
 	}
 	axis.push_back(0);axis.push_back(0);axis.push_back(0);
-	axis.push_back(1);axis.push_back(0);axis.push_back(0);
 	axis.push_back(SIZE*2);axis.push_back(0);axis.push_back(0);
-	axis.push_back(1);axis.push_back(0);axis.push_back(0);
 
 	axis.push_back(0);axis.push_back(0);axis.push_back(0);
-	axis.push_back(0);axis.push_back(1);axis.push_back(0);
 	axis.push_back(0);axis.push_back(SIZE*2);axis.push_back(0);
-	axis.push_back(0);axis.push_back(1);axis.push_back(0);
 
 	axis.push_back(0);axis.push_back(0);axis.push_back(0);
-	axis.push_back(0);axis.push_back(0);axis.push_back(1);
 	axis.push_back(0);axis.push_back(0);axis.push_back(SIZE*2);
-	axis.push_back(0);axis.push_back(0);axis.push_back(1);
 	GLuint buf;
 
 	glGenBuffers(1,&buf);
 	glBindBuffer(GL_ARRAY_BUFFER,buf);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 	glBufferData(GL_ARRAY_BUFFER, axis.size()*sizeof(GLfloat), &axis[0], GL_STATIC_DRAW);
-	glCheckError();
 
 	glGenVertexArrays( 1, &vao );
 	glBindVertexArray( vao );
-	glCheckError();
 
-	GLint position = glGetAttribLocation(w.shader, "pos");
-	glCheckError();
-	glEnableVertexAttribArray( position );
-	glCheckError();
-	glVertexAttribPointer( position, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*6, 0 );
-	glCheckError();
+	glEnableVertexAttribArray( 0 );
+	glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat)*3, 0 );
 
 	glBindVertexArray( 0 );
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
-	glCheckError();
 	//glEnableVertexAttribA
 	vbuf=buf;
 	size=axis.size();
 }
 void Axis::Draw() {
-	glCheckError();
 	glBindVertexArray( vao );
-	glDrawArrays(GL_LINES,0,size/6);
+	glDrawArrays(GL_LINES,0,size/3);
 	glBindVertexArray( 0 );
-	glCheckError();
 }
 void Axis::Terminate() {
 	glDeleteVertexArrays(1,&vao);

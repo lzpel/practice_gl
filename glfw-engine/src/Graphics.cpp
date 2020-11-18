@@ -4,7 +4,7 @@
 
 #include "Graphics.h"
 #include <stdio.h>
-#include <fstream>
+#include <string>
 
 signed genProgram(const char*vsrc,const char*fsrc){
 	printf("GL_VERSION=%s\nGL_SHADING_LANGUAGE_VERSION=%s\n",glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
@@ -58,12 +58,18 @@ signed genProgram(const char*vsrc,const char*fsrc){
 	glDetachShader(ProgramID, FragmentShaderID);
 	glDeleteShader(VertexShaderID);
 	glDeleteShader(FragmentShaderID);
-	glCheckError();
 	return  ProgramID;
 }
-std::string readAll(std::string filePath){
-	std::ifstream ifs(filePath);
-	return std::string(std::istreambuf_iterator<char>(ifs), std::istreambuf_iterator<char>());
+std::string readAll(const char* filePath){
+	FILE*fp;
+	fopen_s(&fp,filePath,"r");
+	fseek(fp, 0, SEEK_END);
+	long size = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	std::string str(size,'\0');
+	fread((void*)str.c_str(), 1, size, fp);
+	fclose(fp);
+	return str;
 }
 
 signed genProgramFromFile(const char*vsrc,const char*fsrc){
