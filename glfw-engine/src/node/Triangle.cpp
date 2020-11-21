@@ -8,13 +8,13 @@
 void Triangle::Init() {
 }
 void Triangle::Draw() {
-	Stat& w=NodeState("WINDOW");
+	double t=StateDouble("TIME");
 	GLfloat m[18]={0};
-	m[0]=sin(2*M_PI*w.time/w.frq);
+	m[0]=sin(2*M_PI*t);
 	m[1]=sqrt(3);
-	m[3]=0.5+0.5*sin(5*M_PI*w.time/w.frq);
-	m[4]=0.5+0.5*sin(7*M_PI*w.time/w.frq);
-	m[5]=0.5+0.5*sin(11*M_PI*w.time/w.frq);
+	m[3]=0.5+0.5*sin(5*M_PI*t);
+	m[4]=0.5+0.5*sin(7*M_PI*t);
+	m[5]=0.5+0.5*sin(11*M_PI*t);
 	m[06]=+1;
 	m[12]=-1;
 	/*

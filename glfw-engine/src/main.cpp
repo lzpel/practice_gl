@@ -14,18 +14,18 @@ public:
 		NodeNew(camera=new Camera());
 		NodeNew(new Axis());
 		//NodeNew(new Triangle());
-		NodeNew(new Model(NodeState("FILE").text));
+		NodeNew(new Model(StateCstr("FILE")));
 	}
 	void Draw() {
-		Stat&w=NodeState("WINDOW");
-		float m=2*M_PI*float(w.time)/w.frq*0.1;
+		float m=0.1*M_PI*StateDouble("TIME");
 		camera->Move(100*sin(m),-100,100*cos(m));
 	}
 };
 int main(int argc, const char** argv){
 	MyEngine engine;
-	engine.NodeState("FILE").text=argc>1?argv[1]:"scene.gltf";
-	engine.NodeState("WINDOW",640,480);
+	engine.StateInt("WIDTH")=640;
+	engine.StateInt("HEIGHT")=480;
+	engine.StateCstr("FILE")=argc>1?argv[1]:"scene.gltf";
 	engine.Run();
 	return 0;
 }

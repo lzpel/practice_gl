@@ -6,21 +6,15 @@
 #define GLPRACTICE_NODE_H
 
 #include<list>
-#include<map>
+#include<unordered_map>
 #include<string>
 class Node{
 public:
-	struct Stat{
-		int x,y,time,frq;
-		signed shader;
-		const char* text;
-		Node* node;
-	};
 	float pos[3];
 	const char* name;
 private:
 	Node* parent;
-	std::map<std::string,Stat> *status;
+	std::unordered_map<std::string,long long> *status;
 	std::list<Node*> children;
 public:
 	///@fn
@@ -47,8 +41,12 @@ public:
 	Node* NodeFind(const char* key);
 	///@fn
 	/// 親を遡り状態を取得する。
-	Stat& NodeState(const char* key,bool apex=false);
-	void NodeState(const char* key,int x,int y);//後で捨てる、一つに一つの変数
+	long long&   State(const char* key,bool apex=false);
+	signed& StateInt(const char* key,bool apex=false);
+	float&  StateFloat(const char* key,bool apex=false);
+	double&  StateDouble(const char* key,bool apex=false);
+	float*  StateFloats(const char* key,bool apex=false);
+	const char*&  StateCstr(const char* key,bool apex=false);
 public:
 	void Move(float x,float y,float z);
 private:

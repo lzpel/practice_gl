@@ -9,7 +9,6 @@ Axis::Axis(){
 	name="Axis";
 }
 void Axis::Init() {
-	Stat&w=NodeState("WINDOW");
 	static const int SIZE=5;
 	std::vector<GLfloat> axis;
 	axis.reserve(6*(3+2*(SIZE*2+1)));

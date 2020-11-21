@@ -10,7 +10,7 @@ Node::Node(bool isStateMachine) {
 	status = 0;
 	name = 0;
 	if (isStateMachine) {
-		status = new std::map<std::string, Node::Stat>();
+		status = new std::unordered_map<std::string, long long>();
 	}
 }
 
@@ -47,7 +47,7 @@ Node *Node::NodeFind(const char *key) {
 	return 0;
 }
 
-Node::Stat &Node::NodeState(const char *key, bool apex) {
+long long& Node::State(const char *key, bool apex) {
 	Node *p = this;
 	if (apex) {
 		while (p->parent)p = p->parent;
@@ -57,11 +57,22 @@ Node::Stat &Node::NodeState(const char *key, bool apex) {
 	return (*p->status)[key];
 }
 
-void Node::NodeState(const char* key,int x,int y){
-	Stat&s=NodeState(key);
-	s.x=x;
-	s.y=y;
+signed& Node::StateInt(const char* key,bool apex){
+	return (signed&)State(key,apex);
 }
+float&  Node::StateFloat(const char* key,bool apex){
+	return (float&)State(key,apex);
+}
+double& Node::StateDouble(const char*key,bool apex){
+	return (double&)State(key,apex);
+}
+float*  Node::StateFloats(const char* key,bool apex){
+	return (float*)State(key,apex);
+}
+const char*&  Node::StateCstr(const char* key,bool apex){
+	return (const char*&)State(key,apex);
+}
+
 void Node::Move(float x, float y, float z) {
 	pos[0] = x;
 	pos[1] = y;

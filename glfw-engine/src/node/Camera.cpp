@@ -16,15 +16,14 @@ void Camera::Init() {}
 void Camera::Terminate() {}
 
 void Camera::Draw() {
-	Stat &window = NodeState("WINDOW");
 	mat4 view_mat;
 	modelview(view_mat, lookat, pos, up);
 	mat4 p, mvp;
-	perspective(p, 45, float(window.x) / window.y, 0.01f, 10000.0f);
+	perspective(p, 45, float(StateInt("WIDTH")) / StateInt("HEIGHT"), 0.01f, 10000.0f);
 	product(mvp,p,view_mat);
 	vec3 sun_position = {3.0, 10.0, -5.0};
 	vec3 sun_color = {1.0, 1.0, 1.0};
-	glUniformMatrix4fv(glGetUniformLocation(window.shader, "mvp"), 1, GL_FALSE, mvp);
-	glUniform3fv(glGetUniformLocation(window.shader, "lp"), 1, &sun_position[0]);
-	glUniform3fv(glGetUniformLocation(window.shader, "lc"), 1, &sun_color[0]);
+	glUniformMatrix4fv(0, 1, GL_FALSE, mvp);
+	glUniform3fv(1, 1, sun_position);
+	glUniform3fv(2, 1, sun_color);
 }

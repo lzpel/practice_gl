@@ -1,12 +1,15 @@
 #version 330 core
+#extension GL_ARB_explicit_uniform_location : enable
+#extension GL_ARB_shading_language_420pack: enable
 
-//uniform mat4 mvp;
-uniform vec3 lp,lc;
-uniform sampler2D tex;
+//layout(location=0) uniform mat4 mvp;
+layout(location=1) uniform vec3 lp;
+layout(location=2) uniform vec3 lc;
+layout(binding=0) uniform sampler2D tex;
 
-//in vec3 pos;
-//in vec3 nor;
-//in vec2 txy;
+layout(location=0) in vec3 pos;
+layout(location=1) in vec3 nor;
+layout(location=2) in vec2 txy;
 
 in vec3 mnor;
 in vec2 mtxy;
