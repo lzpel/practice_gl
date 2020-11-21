@@ -3,22 +3,7 @@
 //
 #include "Camera.h"
 #include "Graphics.h"
-
-glm::mat4 genView(glm::vec3 pos, glm::vec3 lookat) {
-	// Camera matrix
-	glm::mat4 view = glm::lookAt(pos, lookat, glm::vec3(0, 1, 0));
-	return view;
-}
-
-glm::mat4 genMVP(glm::mat4 view_mat, glm::mat4 model_mat, float fov, int w, int h) {
-	glm::mat4 Projection = glm::perspective(glm::radians(fov), (float) w / (float) h, 0.01f, 10000.0f);
-	// Or, for an ortho camera :
-	// glm::mat4 Projection = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f);
-	// // In world coordinates
-	glm::mat4 mvp = Projection * view_mat * model_mat;
-	return mvp;
-}
-
+#include <glm/gtc/matrix_transform.hpp>
 Camera::Camera() {
 	//最低限破綻なきように設定。
 	//メートルに準じる
@@ -34,16 +19,25 @@ void Camera::Terminate() {}
 
 void Camera::Draw() {
 	Stat &window = NodeState("WINDOW");
-	vec3 up = {0, 1, 0};
+	float fov=45,*pmvp;
+	//glm
+
+	glm::mat4 gview_mat = glm::lookAt(glm::vec3(pos[0], pos[1], pos[2]), glm::vec3(lookat[0], lookat[1], lookat[2]), glm::vec3(up[0], up[1], up[0]));
+	mat4 &tmp=(mat4&)gview_mat[0][0];
+	glm::mat4 gProjection = glm::perspective(glm::radians(fov), (float) window.x / (float)  window.y, 0.01f, 10000.0f);
+	glm::mat4 gmvp = gProjection * gview_mat;
+	pmvp=&gmvp[0][0];
+
 	mat4 view_mat;
 	modelview(view_mat, lookat, pos, up);
-	vec3 sun_position = {3.0, 10.0, -5.0};
-	vec3 sun_color = {1.0, 1.0, 1.0};
 	mat4 p, mvp;
 	perspective(p, 45, float(window.x) / window.y, 0.01f, 10000.0f);
-	product(mvp, view_mat,p);
+	product(mvp,view_mat,p);
 	//transpose(mvp);
-	glUniformMatrix4fv(glGetUniformLocation(window.shader, "mvp"), 1, GL_FALSE, mvp);
+
+	vec3 sun_position = {3.0, 10.0, -5.0};
+	vec3 sun_color = {1.0, 1.0, 1.0};
+	glUniformMatrix4fv(glGetUniformLocation(window.shader, "mvp"), 1, GL_FALSE, pmvp);
 	glUniform3fv(glGetUniformLocation(window.shader, "lp"), 1, &sun_position[0]);
 	glUniform3fv(glGetUniformLocation(window.shader, "lc"), 1, &sun_color[0]);
 }

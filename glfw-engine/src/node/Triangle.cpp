@@ -4,6 +4,7 @@
 
 #include "Triangle.h"
 #include "Graphics.h"
+#include <math.h>
 void Triangle::Init() {
 }
 void Triangle::Draw() {

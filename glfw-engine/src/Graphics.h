@@ -9,7 +9,6 @@
 #define GLPRACTICE_GRAPHICS_H
 
 #include <glad/gl.h>
-#include <glm/gtc/matrix_transform.hpp>
 
 typedef float mat4[16];
 typedef float vec3[3];
