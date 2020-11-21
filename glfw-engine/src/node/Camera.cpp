@@ -19,12 +19,13 @@ glm::mat4 genMVP(glm::mat4 view_mat, glm::mat4 model_mat, float fov, int w, int 
 	return mvp;
 }
 
-Camera::Camera(){
+Camera::Camera() {
 	//最低限破綻なきように設定。
 	//メートルに準じる
-	up[0]=up[1]=up[2]=lookat[0]=lookat[1]=lookat[2]=0;up[1]=1;
-	Move(0,1,2);
-	name="camera";
+	up[0] = up[1] = up[2] = lookat[0] = lookat[1] = lookat[2] = 0;
+	up[1] = 1;
+	Move(0, 1, 2);
+	name = "camera";
 }
 
 void Camera::Init() {}
@@ -32,29 +33,17 @@ void Camera::Init() {}
 void Camera::Terminate() {}
 
 void Camera::Draw() {
-	Stat& window=NodeState("WINDOW");
-	// grab uniforms to modify
-	//GLuint MVP_u = glGetUniformLocation(shader.pid, "MVP");
-	//GLuint sun_position_u = glGetUniformLocation(shader.pid, "sun_position");
-	//GLuint sun_color_u = glGetUniformLocation(shader.pid, "sun_color");
-
-	glm::mat4 model_mat = glm::mat4(1.0f);
-	glm::mat4 model_rot = glm::mat4(1.0f);
-	glm::vec3 model_pos = glm::vec3(lookat[0], lookat[1], lookat[2]);
-
-	// generate a camera view, based on eye-position and lookAt world-position
-	glm::mat4 view_mat = genView(glm::vec3(pos[0], pos[1], pos[2]), model_pos);
-
-	glm::vec3 sun_position = glm::vec3(3.0, 10.0, -5.0);
-	glm::vec3 sun_color = glm::vec3(1.0);
-
-	glm::mat4 trans = glm::translate(glm::mat4(1.0f), model_pos);  // reposition model
-	model_rot = glm::rotate(model_rot, glm::radians(0.08f), glm::vec3(0, 1, 0));  // rotate model on y axis
-	model_mat = trans * model_rot;
-
-	// build a model-view-projection
-	glm::mat4 mvp = genMVP(view_mat, model_mat, 45.0f, window.x, window.y);
-	glUniformMatrix4fv(glGetUniformLocation(window.shader, "mvp"), 1, GL_FALSE, &mvp[0][0]);
+	Stat &window = NodeState("WINDOW");
+	vec3 up = {0, 1, 0};
+	mat4 view_mat;
+	modelview(view_mat, lookat, pos, up);
+	vec3 sun_position = {3.0, 10.0, -5.0};
+	vec3 sun_color = {1.0, 1.0, 1.0};
+	mat4 p, mvp;
+	perspective(p, 45, float(window.x) / window.y, 0.01f, 10000.0f);
+	product(mvp, view_mat,p);
+	//transpose(mvp);
+	glUniformMatrix4fv(glGetUniformLocation(window.shader, "mvp"), 1, GL_FALSE, mvp);
 	glUniform3fv(glGetUniformLocation(window.shader, "lp"), 1, &sun_position[0]);
 	glUniform3fv(glGetUniformLocation(window.shader, "lc"), 1, &sun_color[0]);
 }

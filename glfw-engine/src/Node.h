@@ -48,8 +48,8 @@ public:
 	Node* NodeFind(const char* key);
 	///@fn
 	/// 親を遡り状態を取得する。
-	Stat& NodeState(const char* key);
-	void NodeState(const char* key,int x,int y=0);
+	Stat& NodeState(const char* key,bool apex=false);
+	void NodeState(const char* key,int x,int y);//後で捨てる、一つに一つの変数
 public:
 	void Move(float x,float y,float z);
 private:
