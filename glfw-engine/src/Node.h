@@ -8,7 +8,6 @@
 #include<list>
 #include<map>
 #include<string>
-
 class Node{
 public:
 	struct Stat{

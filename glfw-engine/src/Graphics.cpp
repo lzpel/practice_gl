@@ -13,25 +13,13 @@ void identity(mat4 &o) {
 }
 
 void product(mat4 &o, mat4 &a, mat4 &b) {
-	o[0] = a[0] * b[0] + a[4] * b[1] + a[8] * b[2] + a[12] * b[3];
-	o[4] = a[0] * b[4] + a[4] * b[5] + a[8] * b[6] + a[12] * b[7];
-	o[8] = a[0] * b[8] + a[4] * b[9] + a[8] * b[10] + a[12] * b[11];
-	o[12] = a[0] * b[12] + a[4] * b[13] + a[8] * b[14] + a[12] * b[15];
-
-	o[1] = a[1] * b[0] + a[5] * b[1] + a[9] * b[2] + a[13] * b[3];
-	o[5] = a[1] * b[4] + a[5] * b[5] + a[9] * b[6] + a[13] * b[7];
-	o[9] = a[1] * b[8] + a[5] * b[9] + a[9] * b[10] + a[13] * b[11];
-	o[13] = a[1] * b[12] + a[5] * b[13] + a[9] * b[14] + a[13] * b[15];
-
-	o[2] = a[2] * b[0] + a[6] * b[1] + a[10] * b[2] + a[14] * b[3];
-	o[6] = a[2] * b[4] + a[6] * b[5] + a[10] * b[6] + a[14] * b[7];
-	o[10] = a[2] * b[8] + a[6] * b[9] + a[10] * b[10] + a[14] * b[11];
-	o[14] = a[2] * b[12] + a[6] * b[13] + a[10] * b[14] + a[14] * b[15];
-
-	o[3] = a[3] * b[0] + a[7] * b[1] + a[11] * b[2] + a[15] * b[3];
-	o[7] = a[3] * b[4] + a[7] * b[5] + a[11] * b[6] + a[15] * b[7];
-	o[11] = a[3] * b[8] + a[7] * b[9] + a[11] * b[10] + a[15] * b[11];
-	o[15] = a[3] * b[12] + a[7] * b[13] + a[11] * b[14] + a[15] * b[15];
+	for(int g=0;g<4;g++){
+		for(int r=0;r<4;r++){
+			float &m=o[g+4*r];
+			m=0;
+			for(int k=0;k<4;k++)m+=a[g+4*k]*b[k+r*4];
+		}
+	}
 }
 
 void translate(mat4 &o, vec3 &v) {
@@ -66,7 +54,7 @@ void normalize(vec3 &o) {
 	o[2] /= f;
 }
 
-void modelview(mat4 &TR, vec3 &l, vec3 &e, vec3 &u) {
+void modelview(mat4 &RT, vec3 &l, vec3 &e, vec3 &u) {
 	vec3 x, y, z;//新座標での基底
 	sub(z, e, l);
 	normalize(z);
@@ -80,15 +68,15 @@ void modelview(mat4 &TR, vec3 &l, vec3 &e, vec3 &u) {
 			x[2], y[2], z[2], 0,
 			0, 0, 0, 1,
 	};
-	transpose(R);
+	//transpose(R);
 	mat4 T = {
 			1, 0, 0, 0,
 			0, 1, 0, 0,
 			0, 0, 1, 0,
 			-e[0], -e[1], -e[2], 1
 	};
-	transpose(T);
-	product(TR, T, R);
+	//transpose(T);
+	product(RT, R, T);
 }
 
 void perspective(mat4 &P, float fovy, float aspect, float near, float far) {
