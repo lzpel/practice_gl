@@ -18,7 +18,7 @@ public:
 	}
 	void Draw() {
 		float m=0.1*M_PI*StateDouble("TIME");
-		camera->Move(100*sin(m),-100,100*cos(m));
+		camera->Move(100*sin(m),+50,100*cos(m));
 	}
 };
 int main(int argc, const char** argv){

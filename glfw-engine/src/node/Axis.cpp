@@ -49,6 +49,8 @@ void Axis::Init() {
 }
 void Axis::Draw() {
 	glBindVertexArray( vao );
+	mat4&pv=*(mat4*)StateFloats("PV");
+	glUniformMatrix4fv(0, 1, GL_FALSE, pv);
 	glDrawArrays(GL_LINES,0,size/3);
 	glBindVertexArray( 0 );
 }

@@ -45,7 +45,7 @@ public:
 	signed& StateInt(const char* key,bool apex=false);
 	float&  StateFloat(const char* key,bool apex=false);
 	double&  StateDouble(const char* key,bool apex=false);
-	float*  StateFloats(const char* key,bool apex=false);
+	float*&  StateFloats(const char* key,bool apex=false);
 	const char*&  StateCstr(const char* key,bool apex=false);
 public:
 	void Move(float x,float y,float z);

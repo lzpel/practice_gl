@@ -10,14 +10,17 @@
 
 #include <glad/gl.h>
 
-typedef float mat4[16];
-typedef float vec3[3];
+typedef float mat4[16],vec3[3],vec4[4];
 void identity(mat4&o);
-void product(mat4&o,mat4&a,mat4&b);
-void translate(mat4&o,vec3&v);
-void cross(vec3&o,vec3&a,vec3&b);
-void add(vec3&o,vec3&a,vec3&b);
-void sub(vec3&o,vec3&a,vec3&b);
+void copy(mat4&o,const double*a);
+void copy(mat4&o,const float*y);
+void product(mat4&o,const mat4&a,const mat4&b);
+void productscale(mat4&o,const vec3&a,const mat4&b);
+void productrotation(mat4&o,const vec4&a,const mat4&b);
+void producttranslation(mat4&o,const vec3&a,const mat4&b);
+void cross(vec3&o,const vec3&a,const vec3&b);
+void add(vec3&o,const vec3&a,const vec3&b);
+void sub(vec3&o,const vec3&a,const vec3&b);
 void modelview(mat4&TR,vec3&l,vec3&e,vec3&u);
 void perspective(mat4&P,float fovy,float aspect,float near,float far);
 void transpose(mat4&o);

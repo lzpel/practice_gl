@@ -66,8 +66,8 @@ float&  Node::StateFloat(const char* key,bool apex){
 double& Node::StateDouble(const char*key,bool apex){
 	return (double&)State(key,apex);
 }
-float*  Node::StateFloats(const char* key,bool apex){
-	return (float*)State(key,apex);
+float*&  Node::StateFloats(const char* key,bool apex){
+	return (float*&)State(key,apex);
 }
 const char*&  Node::StateCstr(const char* key,bool apex){
 	return (const char*&)State(key,apex);

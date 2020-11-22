@@ -11,37 +11,83 @@ void identity(mat4 &o) {
 	o[1] = o[2] = o[3] = o[4] = o[6] = o[7] = o[8] = o[9] = o[11] = o[12] = o[13] = o[14] = 0;
 	o[0] = o[5] = o[10] = o[15] = 1;
 }
+void copy(mat4&o,const double*a){
+	for(int i=0;i<16;++i)o[i]=a[i];
+}
+void copy(mat4&o,const float*a){
+	for(int i=0;i<16;++i)o[i]=a[i];
+}
 
-void product(mat4 &o, mat4 &a, mat4 &b) {
+void product(mat4 &o, const mat4 &a, const mat4 &b) {
 	for(int g=0;g<4;g++){
 		for(int r=0;r<4;r++){
-			float &m=o[g+4*r];
-			m=0;
+			float &m=o[g+4*r]=0;
 			for(int k=0;k<4;k++)m+=a[g+4*k]*b[k+r*4];
 		}
 	}
 }
 
-void translate(mat4 &o, vec3 &v) {
-	identity(o);
-	o[3] = v[0];
-	o[7] = v[0];
-	o[11] = v[0];
+void productscale(mat4&o,const vec3&a,const mat4&b){
+	o[0]=b[0]*a[0];
+	o[1]=b[1]*a[1];
+	o[2]=b[2]*a[2];
+	o[3]=b[3];
+	o[4]=b[4]*a[0];
+	o[5]=b[5]*a[1];
+	o[6]=b[6]*a[2];
+	o[7]=b[7];
+	o[8]=b[8]*a[0];
+	o[9]=b[9]*a[1];
+	o[10]=b[10]*a[2];
+	o[11]=b[11];
+	o[12]=b[12]*a[0];
+	o[13]=b[13]*a[1];
+	o[14]=b[14]*a[2];
+	o[15]=b[15];
+}
+void productrotation(mat4&o,const vec4&a,const mat4&b){
+	//https://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm
+	const float &qx=a[0],&qy=a[1],&qz=a[2],&qw=a[3];
+	mat4 am={
+			1- 2*qz*qz- 2*qy*qy,2*qx*qy+ 2*qw*qz,2*qx*qz- 2*qw*qy,0,
+			- 2* qz*qw+2*qy*qx,	1 - 2*qz*qz - 2*qx*qx,2*qy*qz + 2*qw*qx,0,
+			2*qy*qw +2* qz*qx,	2*qz*qy- 2*qx*qw,	1- 2*qy*qy- 2*qx*qx,0,
+			0,0,0,1
+	};
+	product(o,am,b);
+}
+void producttranslation(mat4&o,const vec3&a,const mat4&b){
+	o[0]=b[0];
+	o[1]=b[1];
+	o[2]=b[2];
+	o[3]=b[3];
+	o[4]=b[4];
+	o[5]=b[5];
+	o[6]=b[6];
+	o[7]=b[7];
+	o[8]=b[8];
+	o[9]=b[9];
+	o[10]=b[10];
+	o[11]=b[11];
+	o[12]=b[12]+a[0];
+	o[13]=b[13]+a[1];
+	o[14]=b[14]+a[2];
+	o[15]=b[15];
 }
 
-void cross(vec3 &o, vec3 &a, vec3 &b) {
+void cross(vec3 &o, const vec3 &a, const vec3 &b) {
 	o[0] = a[1] * b[2] - a[2] * b[1];
 	o[1] = a[2] * b[0] - a[0] * b[2];
 	o[2] = a[0] * b[1] - a[1] * b[0];
 }
 
-void add(vec3 &o, vec3 &a, vec3 &b) {
+void add(vec3 &o, const vec3 &a, const vec3 &b) {
 	o[0] = a[0] + b[0];
 	o[1] = a[1] + b[1];
 	o[2] = a[2] + b[2];
 }
 
-void sub(vec3 &o, vec3 &a, vec3 &b) {
+void sub(vec3 &o, const vec3 &a, const vec3 &b) {
 	o[0] = a[0] - b[0];
 	o[1] = a[1] - b[1];
 	o[2] = a[2] - b[2];

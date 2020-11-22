@@ -6,10 +6,10 @@
 #define GLPRACTICE_CAMERA_H
 
 #include "Node.h"
-
+#include "Graphics.h"
 class Camera :virtual public Node{
-	float up[3];
-	float lookat[3];
+	vec3 up,lookat;
+	mat4 pv;
 	int shaderid;
 	void Init();
 	void Draw();

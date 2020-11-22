@@ -196,21 +196,51 @@ void drawMesh(tinygltf::Model &model, tinygltf::Mesh &mesh) {
 }
 
 // recursively draw node and children nodes of model
-void drawModelNodes(tinygltf::Model &model, tinygltf::Node &node) {
+void drawModelNodes(tinygltf::Model &model, tinygltf::Node &node, const mat4 &pv) {
+	// mat = PV * ... * s1 * s2 * s3 ; s = M * T * R * S
+	mat4 s, d;
+	identity(s);
+	//s=S*s
+	if (!node.scale.empty()) {
+		vec3 a = {(float) node.scale[0], (float) node.scale[1], (float) node.scale[2]};
+		productscale(d, a, s);
+		copy(s, d);
+	}
+	//s=R*s
+	if (!node.rotation.empty()) {
+		vec4 a = {(float) node.rotation[0], (float) node.rotation[1], (float) node.rotation[2], (float) node.rotation[3]};
+		productrotation(d, a, s);
+		copy(s, d);
+	}
+	//s=T*s
+	if (!node.translation.empty()) {
+		vec3 a = {(float) node.translation[0], (float) node.translation[1], (float) node.translation[2]};
+		producttranslation(d, a, s);
+		copy(s, d);
+	}
+	//s=M*s
+	if (!node.matrix.empty()) {
+		mat4 a;
+		copy(a, node.matrix.data());
+		product(d, a, s);//PV*M
+		copy(s, d);
+	}
+	//d=PV*...*S_{n-1}*S_{n}
+	product(d, pv, s);
 	if ((node.mesh >= 0) && (node.mesh < model.meshes.size())) {
+		glUniformMatrix4fv(0, 1, GL_FALSE, d);
 		drawMesh(model, model.meshes[node.mesh]);
 	}
 	for (size_t i = 0; i < node.children.size(); i++) {
-		drawModelNodes(model, model.nodes[node.children[i]]);
+		drawModelNodes(model, model.nodes[node.children[i]], d);
 	}
 }
 
-void drawModel(GLuint vao, tinygltf::Model &model) {
+void drawModel(GLuint vao, tinygltf::Model &model, const mat4 &pv) {
 	glBindVertexArray(vao);
-
 	const tinygltf::Scene &scene = model.scenes[model.defaultScene];
 	for (size_t i = 0; i < scene.nodes.size(); ++i) {
-		drawModelNodes(model, model.nodes[scene.nodes[i]]);
+		drawModelNodes(model, model.nodes[scene.nodes[i]], pv);
 	}
 
 	glBindVertexArray(0);
@@ -259,7 +289,8 @@ void Model::Init() {
 }
 
 void Model::Draw() {
-	drawModel(vao, model);
+	mat4 &pv = *(mat4 *) StateFloats("PV");
+	drawModel(vao, model, pv);
 }
 
 void Model::Terminate() {
