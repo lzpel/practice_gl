@@ -2,6 +2,8 @@
 
 C++/OpenGLの練習
 
+![img](https://user-images.githubusercontent.com/18492524/99470055-6d89c000-2987-11eb-97be-89c2a6906ca8.gif)
+
 ## ディレクトリ構成
 
 - glfw/
